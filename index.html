@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>吃什么</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div class="stage" id="stage"></div>
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <div class="sh-h"><h3 id="sheetTitle">你的偏好</h3><button class="sh-done" id="sheetClose">完成</button></div>
+    <div class="body" id="sheetBody"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+<script src="data/dishes.js"></script>
+<!-- 真实数据（tools/howtocook2json.mjs 生成）。没有这个文件也不影响，回落到上面的演示数据 -->
+<script src="data/dishes.generated.js" onerror="window.DISHES_GENERATED=null"></script>
+<script>
+  if (window.DISHES_GENERATED && window.DISHES_GENERATED.length) {
+    window.DISHES = window.DISHES_GENERATED;
+  }
+</script>
+<script src="app.js"></script>
+</body>
+</html>
