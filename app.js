@@ -552,14 +552,8 @@
     const d = byId(S.dishId);
     if (!d) return renderList();
     const [w1, w2] = whyLines(d);
-    // 小红书搜索页现在必须先登录才给看，B 站不用，所以主按钮走 B 站
+    // 「教学」三个入口：装了 App 直接跳进去搜，没装退回网页搜索
     const kwRaw = d.name + ' 做法';
-    const kw = encodeURIComponent(kwRaw);
-    const vd = {
-      bili: `https://search.bilibili.com/all?keyword=${kw}`,
-      douyin: `https://www.douyin.com/search/${kw}?type=video`,
-      xhs: `https://www.xiaohongshu.com/search_result?keyword=${kw}`
-    };
 
     let body;
     if (d.takeoutOnly) {
@@ -617,23 +611,12 @@
           <div class="why-line">${w2}</div>
         </div>
         ${body}
-        <div class="vids">
-          <a class="btn ghost vids-main" href="${vd.bili}" target="_blank" rel="noopener">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 5v14l11-7z"/></svg>
-            看视频
-          </a>
-          <div class="vids-alt">
-            <a href="${vd.douyin}" target="_blank" rel="noopener">抖音</a>
-            <a href="${vd.xhs}" target="_blank" rel="noopener">小红书</a>
-          </div>
-          <div class="vids-app">
-            <span class="va-lab">装了 App 就直接搜</span>
-            <button class="va-btn" data-act="appSearch" data-app="bili" data-kw="${esc(kwRaw)}">B 站</button>
-            <button class="va-btn" data-act="appSearch" data-app="douyin" data-kw="${esc(kwRaw)}">抖音</button>
-            <button class="va-btn" data-act="appSearch" data-app="xhs" data-kw="${esc(kwRaw)}">小红书</button>
-          </div>
+        <div class="vids-app">
+          <span class="va-lab">教学：</span>
+          <button class="va-btn" data-act="appSearch" data-app="bili" data-kw="${esc(kwRaw)}">B 站</button>
+          <button class="va-btn" data-act="appSearch" data-app="douyin" data-kw="${esc(kwRaw)}">抖音</button>
+          <button class="va-btn" data-act="appSearch" data-app="xhs" data-kw="${esc(kwRaw)}">小红书</button>
         </div>
-        <div class="hint2" style="text-align:center;margin-top:8px">B 站不用登录就能看；抖音和小红书网页版常要登录，装了就点「App 里搜」</div>
       </div>
       <div class="actionbar">
         <button class="btn ghost" data-act="back" style="flex:0 0 38%">再看看</button>

@@ -71,12 +71,28 @@ gradle assembleDebug
 
 ## 签名
 
-debug 包用系统调试签名，自己装没问题。
-要发给别人或上架，得自己生成 keystore：
+`app/build.gradle.kts` 已经读环境变量：`KEYSTORE_PATH` / `KEYSTORE_PASSWORD` / `KEY_ALIAS` / `KEY_PASSWORD`，
+本地也可以放一个 `keystore.properties`（已在 .gitignore 里）。
 
-```bash
-keytool -genkey -v -keystore whattoeat.jks -keyalg RSA -keysize 2048 -validity 10000 -alias whattoeat
-```
+- **配了密钥** → 出正式签名的 release 包，可以直接发给别人，也能覆盖升级。
+- **没配密钥** → 自动退回 debug 签名，照样能装、能用；但以后换成正式密钥时，因为 key 变了，必须先卸载旧版才能装新版。
 
-然后在 `app/build.gradle.kts` 里配 `signingConfigs`，CI 里用 repository secrets 传 keystore。
-这一步涉及你的密钥，我没替你生成，也没往仓库里写任何凭据。
+### 在云端生成密钥（不用装 Android Studio）
+
+1. 仓库 Actions 页面 → 左侧选 **make-keystore** → **Run workflow**
+2. 填两个输入：`alias`（默认 whattoeat）、`password`（自己定，**务必记牢**）
+3. 跑完在这次的 artifact 里下载 **whattoeat-keystore**
+4. 解压出 `keystore.base64.txt`，把里面**整行内容**复制
+5. 仓库 Settings → Secrets and variables → Actions → New repository secret，依次添加四条：
+
+| Secret 名 | 值 |
+|---|---|
+| `ANDROID_KEYSTORE_BASE64` | 上一步复制的整行 base64 |
+| `ANDROID_KEYSTORE_PASSWORD` | 你设的口令 |
+| `ANDROID_KEY_ALIAS` | 你填的别名（默认 `whattoeat`） |
+| `ANDROID_KEY_PASSWORD` | 同一个口令 |
+
+6. 回到 Actions 重跑 **android**。日志里会出现「已载入正式签名密钥」，末尾的「签名检查」会打印证书指纹。
+
+> 密钥库文件丢了这个 app 就永远无法覆盖升级。把 `whattoeat.jks` 和口令单独备份一份。
+

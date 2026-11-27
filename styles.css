@@ -135,54 +135,58 @@ h1 .dim{color:var(--ter)}
 .mode .arrow{position:absolute;right:14px;bottom:14px;color:var(--ter);opacity:.6}
 
 /* ---------- 顶栏：个人 / 冰箱 / 我找找 / 搜索 ---------- */
-.bar{display:flex;align-items:stretch;gap:8px;margin-top:16px;padding:0 20px}
+.bar{display:flex;align-items:stretch;gap:8px;margin-top:14px;padding:0 20px}
 .bbtn{
   position:relative;flex:0 0 auto;
-  display:flex;align-items:center;gap:6px;
-  height:48px;padding:0 11px 0 9px;
+  display:flex;align-items:center;gap:5px;
+  height:40px;padding:0 10px 0 8px;
   border-radius:var(--r-md);background:var(--card);color:var(--sub);
-  box-shadow:var(--shadow);font-size:13px;letter-spacing:.02em;
+  box-shadow:var(--shadow);font-size:12.5px;letter-spacing:.01em;
   transition:transform .14s var(--ease), color .18s, opacity .18s;
 }
-.bbtn svg{width:17px;height:17px;display:block;opacity:.9;flex:0 0 auto}
+/* 视觉 40px，热区补到 44px，手指好点又不显笨 */
+.bbtn::after{content:"";position:absolute;left:0;right:0;top:-2px;bottom:-2px}
+.bbtn svg{width:15px;height:15px;display:block;opacity:.9;flex:0 0 auto}
 .bbtn.on{color:var(--accent)}
 .bbtn.on svg{opacity:1}
 .bbtn.off{color:var(--ter);box-shadow:inset 0 0 0 1px var(--sep2)}
 .bbtn.off svg{opacity:.5}
 .bbtn:active{transform:scale(.94)}
 /* 方形勾选框：勾上才按这个维度筛 */
-.cbx{width:15px;height:15px;flex:0 0 auto;border-radius:4.5px;
+.cbx{width:14px;height:14px;flex:0 0 auto;border-radius:4px;
   border:1.6px solid var(--ter);background:transparent;position:relative;
   transition:background .16s var(--ease), border-color .16s}
 .cbx.ck{background:var(--accent);border-color:var(--accent)}
-.cbx.ck::after{content:"";position:absolute;left:4.4px;top:1.2px;width:4px;height:8px;
+.cbx.ck::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:7.5px;
   border:solid #fff;border-width:0 1.8px 1.8px 0;transform:rotate(42deg)}
 .cnt{position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;
   background:var(--accent);color:#fff;font-size:9.5px;line-height:15px;text-align:center;font-style:normal}
 .sbox{flex:1;min-width:0;display:flex;align-items:center;position:relative}
 .sbox input{
-  width:100%;height:100%;min-height:48px;border:0;border-radius:var(--r-md);
+  width:100%;height:100%;min-height:40px;border:0;border-radius:var(--r-md);
   background:var(--card);color:var(--text);box-shadow:var(--shadow);
-  font:inherit;font-size:14.5px;padding:0 34px 0 13px;outline:none;-webkit-appearance:none;
+  font:inherit;font-size:13.5px;padding:0 30px 0 12px;outline:none;-webkit-appearance:none;
   transition:box-shadow .18s;
 }
+.sbox::after{content:"";position:absolute;left:0;right:0;top:-2px;bottom:-2px}
 .sbox input::placeholder{color:var(--ter)}
 .sbox input:focus{box-shadow:var(--shadow), 0 0 0 2px var(--accent-soft), 0 0 0 3px rgba(255,122,47,.55)}
 .sbox input::-webkit-search-cancel-button{-webkit-appearance:none}
 .clr{
-  position:absolute;right:6px;top:50%;transform:translateY(-50%) scale(.8);
-  width:24px;height:24px;border:0;border-radius:50%;padding:0;
-  background:var(--sep);color:var(--sub);font-size:15px;line-height:22px;
+  position:absolute;right:5px;top:50%;transform:translateY(-50%) scale(.8);
+  width:22px;height:22px;border:0;border-radius:50%;padding:0;
+  background:var(--sep);color:var(--sub);font-size:14px;line-height:20px;
   opacity:0;pointer-events:none;transition:opacity .16s,transform .16s var(--ease);
 }
 .clr.on{opacity:1;pointer-events:auto;transform:translateY(-50%) scale(1)}
 .clr:active{transform:translateY(-50%) scale(.88)}
 .sgo{
-  flex:0 0 auto;min-height:48px;padding:0 15px;border-radius:var(--r-md);border:0;
-  background:var(--accent);color:#fff;font:inherit;font-size:14.5px;font-weight:600;
+  position:relative;flex:0 0 auto;min-height:40px;padding:0 14px;border-radius:var(--r-md);border:0;
+  background:var(--accent);color:#fff;font:inherit;font-size:14px;font-weight:600;
   box-shadow:0 6px 18px -10px rgba(255,122,47,.9);
   transition:transform .14s var(--ease);
 }
+.sgo::after{content:"";position:absolute;left:0;right:0;top:-2px;bottom:-2px}
 .sgo:active{transform:scale(.95)}
 
 /* 排序方式：时间短 / 用料少 */
@@ -366,22 +370,15 @@ h1 .dim{color:var(--ter)}
   background:rgba(120,120,128,.14);
 }
 
-/* 看视频：主按钮走 B 站，另外两个是文字入口 */
-.vids{margin-top:22px}
-.vids-main{text-decoration:none}
-.vids-alt{display:flex;justify-content:center;gap:20px;margin-top:12px}
-.vids-app{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
-.va-lab{font-size:12px;color:var(--ter)}
+/* 教学：一行文字标签 + 三个 App 入口 */
+.vids-app{display:flex;align-items:center;gap:8px;margin-top:22px;flex-wrap:wrap}
+.va-lab{font-size:13px;color:var(--sub);margin-right:2px}
 .va-btn{
-  border:0;padding:6px 11px;border-radius:999px;font-size:12.5px;font-weight:600;
-  color:var(--text);background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.05);
+  border:0;padding:0 14px;min-height:40px;border-radius:999px;font-size:13px;font-weight:600;
+  color:var(--text);background:var(--card);box-shadow:var(--shadow);
+  transition:transform .14s var(--ease), opacity .16s;
 }
-.va-btn:active{transform:scale(.95)}
-.vids-alt a{
-  font-size:13.5px;color:var(--accent);text-decoration:none;
-  padding:6px 4px;border-radius:8px;
-}
-.vids-alt a:active{opacity:.6}
+.va-btn:active{transform:scale(.95);opacity:.85}
 
 /* ---------- buttons ---------- */
 .btn{
@@ -559,7 +556,5 @@ h1 .dim{color:var(--ter)}
 .nb-clr{padding:12px 8px}
 
 .va-btn{min-height:40px;padding:0 15px;font-size:13px}
-.vids-alt{gap:10px}
-.vids-alt a{padding:13px 10px;font-size:14px}
 
 /* ---------- 
