@@ -11,8 +11,10 @@ $dst = Join-Path $root 'delivery/android/app/src/main/assets/www'
 if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }
 New-Item -ItemType Directory -Path (Join-Path $dst 'data') -Force | Out-Null
 
-foreach ($f in @('index.html', 'app.js', 'styles.css')) {
-    Copy-Item (Join-Path $root $f) (Join-Path $dst $f)
+foreach ($f in @('index.html', 'app.js', 'styles.css', 'manifest.webmanifest',
+                 'favicon-32.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512-rounded.png')) {
+    $src = Join-Path $root $f
+    if (Test-Path $src) { Copy-Item $src (Join-Path $dst $f) }
 }
 foreach ($f in @('dishes.js', 'dishes.generated.js')) {
     $src = Join-Path $root "data/$f"

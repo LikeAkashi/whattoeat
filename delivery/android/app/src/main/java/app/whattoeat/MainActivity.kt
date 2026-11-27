@@ -57,9 +57,15 @@ class MainActivity : ComponentActivity() {
                 ): Boolean {
                     val url = request.url.toString()
                     if (url.startsWith(BASE)) return false
-                    // 外部链接（小红书视频）丢给系统浏览器
+                    // 站外链接交给系统：https 走浏览器，bilibili:// 这类自定义 scheme
+                    // 会直接拉起对应 App；没装就什么都不做，页面里的 JS 会自己退回网页搜索。
                     runCatching {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                        val u = Uri.parse(url)
+                        val intent = Intent(Intent.ACTION_VIEW, u)
+                        if (u.scheme != "http" && u.scheme != "https") {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        startActivity(intent)
                     }
                     return true
                 }

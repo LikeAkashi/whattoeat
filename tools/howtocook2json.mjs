@@ -80,6 +80,7 @@ function cleanLine(s) {
     .replace(/\*\s*份数\s*$/g, '')
     .replace(/[（(][^）)]*[）)]/g, ' ')
     .replace(/\*\*/g, '')
+    .replace(/`/g, '')          // 源数据大量用 `青椒` 这类行内代码，去掉反引号
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -87,14 +88,16 @@ function cleanLine(s) {
 /** `1 颗 油麦菜` / `西红柿 2 个` / `盐` → { n, q } */
 function splitNameQty(body) {
   const s = cleanLine(body);
+  // 有的写成「猪五花肉：约(3~4 斤)」，冒号和「约」得从名字里刮掉
+  const tidy = (n) => n.replace(/[：:]\s*约?\s*$/, '').replace(/^约\s*/, '').replace(/[：:]+$/, '').trim();
   const lead = s.match(new RegExp(`^(${QTY})\\s+(.+)$`));
   if (lead) {
     const rest = lead[2].trim();
-    if (rest && !new RegExp(`^${UNIT}$`).test(rest)) return { n: rest, q: lead[1].trim() };
+    if (rest && !new RegExp(`^${UNIT}$`).test(rest)) return { n: tidy(rest), q: lead[1].trim() };
   }
   const tail = s.match(new RegExp(`^(.+?)\\s+(${QTY})$`));
-  if (tail) return { n: tail[1].trim(), q: tail[2].trim() };
-  return { n: s, q: '' };
+  if (tail) return { n: tidy(tail[1]), q: tail[2].trim() };
+  return { n: tidy(s), q: '' };
 }
 
 /* ---------- 单文件解析 ---------- */
@@ -130,8 +133,10 @@ function parseMd(text, fileRel) {
     if (km) kcal = +km[1];
 
     if (!cur) continue;
-    if (ITEM.test(line)) secs[cur].push(line.replace(ITEM, '').trim());
-    else if (line.trim() && !/^!\[/.test(line) && !/^\|/.test(line)) secs[cur].push(line.trim());
+    // 源数据大量用 `青椒` 这类行内代码和 **加粗**，收集时就洗掉，别让它显示到界面上
+    const plain = (s) => s.replace(ITEM, '').replace(/`/g, '').replace(/\*\*/g, '').trim();
+    if (ITEM.test(line)) secs[cur].push(plain(line));
+    else if (line.trim() && !/^!\[/.test(line) && !/^\|/.test(line)) secs[cur].push(plain(line.trim()));
   }
 
   /* 原料 / 工具：真实数据的列表里会混进长句、链接、工具名，先洗一遍 */
@@ -150,6 +155,28 @@ function parseMd(text, fileRel) {
     const parsed = splitNameQty(hit);
     if (parsed.q && (parsed.n.includes(x.n) || x.n.includes(parsed.n) || parsed.n === x.n)) x.q = parsed.q;
   }
+
+  /* 「必备原料」在部分菜谱里写得不全（实测空气炸锅照烧鸡饭只写了酱油和糖，
+     鸡肉只在「计算」段里），而计算段是按份量列的、更可靠，缺的从那里补回来 */
+  for (const l of calcLines) {
+    const parsed = splitNameQty(cleanLine(l));
+    if (!parsed.n || !parsed.q || parsed.n.length > 16) continue;
+    if (isTool(parsed.n) || /[。！？]/.test(parsed.n)) continue;
+    if (ing.some(x => x.n.includes(parsed.n) || parsed.n.includes(x.n))) continue;
+    ing.push({ n: parsed.n, q: parsed.q });
+  }
+
+  /* 有的菜谱把几样原料挤在一行（「大葱、姜、大蒜、干辣椒」），拆开才数得清用料 */
+  const flat = [];
+  for (const x of ing) {
+    const parts = x.n.split(/[、,，;；]/).map(s => s.trim()).filter(Boolean);
+    if (parts.length > 1) parts.forEach(p => flat.push({ n: p, q: x.q }));
+    else flat.push(x);
+  }
+  const uniq = [];
+  for (const x of flat) if (!uniq.some(y => y.n === x.n)) uniq.push(x);
+  ing.length = 0;
+  ing.push(...uniq);
 
   /* 说明文字：把原料行剔掉，别和 pill 重复 */
   const calcProse = calcLines
@@ -264,11 +291,37 @@ for (const f of files) {
   }
 }
 
+/* ---------- 合并补充菜谱（additions/，与上游同格式）---------- */
+const EXTRA = getArg('extra', '');
+let extraAdded = 0, extraDup = 0;
+if (EXTRA) {
+  const seen = new Set(dishes.map(d => d.name));
+  let extraFiles = [];
+  try {
+    extraFiles = walk(EXTRA).sort();
+  } catch {
+    console.warn(`⚠️  读不到补充目录 ${EXTRA}，跳过`);
+  }
+  for (const f of extraFiles) {
+    try {
+      const d = parseMd(readFileSync(f, 'utf8'), relative(EXTRA, f));
+      if (!d.ing.length || !d.cook.length) continue;
+      if (seen.has(d.name)) { extraDup++; continue; }
+      seen.add(d.name);
+      dishes.push(d);
+      extraAdded++;
+    } catch {
+      skipped++;
+    }
+  }
+}
+
 const meta = {
   generated: new Date().toISOString(),
   source: 'Anduin2017/HowToCook',
   license: 'Unlicense（公有领域，可自由分发）',
   url: 'https://github.com/Anduin2017/HowToCook',
+  extra: EXTRA ? { dir: 'additions/', count: extraAdded, license: '与上游同许可（Unlicense）' } : null,
   total: dishes.length,
   note: 'time / taste / tex / tags 源数据里没有，留空不猜；app 对缺失值是中性处理。'
 };
