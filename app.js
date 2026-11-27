@@ -456,13 +456,13 @@
       </div>
 
       <div class="bar">
-        <button class="bbtn ${p.useP ? 'on' : 'off'}" data-act="sheetPrefs">
+        <button class="bbtn ${p.useP ? 'on' : 'off'}" data-act="sheetPrefs" aria-label="个人偏好">
           <i class="cbx ${p.useP ? 'ck' : ''}" data-act="toggleP"></i>
-          ${ICON_USER}<span>个人</span>
+          ${ICON_USER}
         </button>
-        <button class="bbtn ${p.useF ? 'on' : 'off'}" data-act="sheetFridge">
+        <button class="bbtn ${p.useF ? 'on' : 'off'}" data-act="sheetFridge" aria-label="冰箱里有什么">
           <i class="cbx ${p.useF ? 'ck' : ''}" data-act="toggleF"></i>
-          ${ICON_FRIDGE}<span>冰箱</span>${haveN ? `<i class="cnt">${haveN}</i>` : ''}
+          ${ICON_FRIDGE}${haveN ? `<i class="cnt">${haveN}</i>` : ''}
         </button>
         <div class="sbox">
           <input id="q" type="search" inputmode="search" enterkeyhint="search"

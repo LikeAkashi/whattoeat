@@ -138,14 +138,13 @@ h1 .dim{color:var(--ter)}
 .bar{display:flex;align-items:stretch;gap:8px;margin-top:14px;padding:0 20px}
 .bbtn{
   position:relative;flex:0 0 auto;
-  display:flex;align-items:center;gap:5px;
-  height:40px;padding:0 10px 0 8px;
+  display:flex;align-items:center;gap:6px;
+  height:40px;padding:0 11px;
   border-radius:var(--r-md);background:var(--card);color:var(--sub);
   box-shadow:var(--shadow);font-size:12.5px;letter-spacing:.01em;
   transition:transform .14s var(--ease), color .18s, opacity .18s;
 }
-/* 视觉 40px，热区补到 44px，手指好点又不显笨 */
-.bbtn::after{content:"";position:absolute;left:0;right:0;top:-2px;bottom:-2px}
+/* 注意：这里不能再用 ::after 铺一层加宽热区，那会把里面的勾选框盖住导致点不动 */
 .bbtn svg{width:15px;height:15px;display:block;opacity:.9;flex:0 0 auto}
 .bbtn.on{color:var(--accent)}
 .bbtn.on svg{opacity:1}
@@ -168,7 +167,6 @@ h1 .dim{color:var(--ter)}
   font:inherit;font-size:13.5px;padding:0 30px 0 12px;outline:none;-webkit-appearance:none;
   transition:box-shadow .18s;
 }
-.sbox::after{content:"";position:absolute;left:0;right:0;top:-2px;bottom:-2px}
 .sbox input::placeholder{color:var(--ter)}
 .sbox input:focus{box-shadow:var(--shadow), 0 0 0 2px var(--accent-soft), 0 0 0 3px rgba(255,122,47,.55)}
 .sbox input::-webkit-search-cancel-button{-webkit-appearance:none}
@@ -186,7 +184,6 @@ h1 .dim{color:var(--ter)}
   box-shadow:0 6px 18px -10px rgba(255,122,47,.9);
   transition:transform .14s var(--ease);
 }
-.sgo::after{content:"";position:absolute;left:0;right:0;top:-2px;bottom:-2px}
 .sgo:active{transform:scale(.95)}
 
 /* 排序方式：时间短 / 用料少 */
