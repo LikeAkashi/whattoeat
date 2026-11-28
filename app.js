@@ -30,6 +30,8 @@
   ];
 
   /* ---------- state ---------- */
+  // 版本号：会显示在列表底部。判断「装的是不是新包」就靠它。
+  const APP_VER = '1.2.0';
   const KEY = 'whattoeat.prefs.v2';
   const OLD_KEY = 'whattoeat.prefs.v1';
   const DEFAULTS = { goals: [], avoid: [], taste: [], tex: [], have: [], q: '', useP: true, useF: true, sort: '' };
@@ -445,7 +447,7 @@
       block = `<div class="stack" id="stack">${cardsFor(0, shown, !q && !haveN)}</div>`
         + (shown < all.length
           ? `<div class="more" id="more">继续往下滑</div>`
-          : `<div class="more end">一共 ${all.length} 道</div>`);
+          : `<div class="more end">一共 ${all.length} 道 · v${APP_VER}</div>`);
     }
 
     return `
@@ -667,7 +669,7 @@
     const stack = el.querySelector('#stack');
     if (stack) stack.insertAdjacentHTML('beforeend', cardsFor(from, from + next.length, !S.prefs.q.trim() && !S.prefs.have.length));
     const more = el.querySelector('#more');
-    if (S.shown >= all.length && more) more.outerHTML = `<div class="more end">一共 ${all.length} 道</div>`;
+    if (S.shown >= all.length && more) more.outerHTML = `<div class="more end">一共 ${all.length} 道 · v${APP_VER}</div>`;
   }
 
   function go(view, opts) {
